@@ -29,12 +29,5 @@ public class JedisTest {
         }
         System.out.println(System.nanoTime()-stime);
         // 获取数据并输出
-        Set<String> keys = jedis.keys("*");
-        Iterator<String> it=keys.iterator() ;
-        while(it.hasNext()){
-            String key = it.next();
-            System.out.println(key);
-        }
-        System.out.println(System.nanoTime()-stime);
     }
 }
