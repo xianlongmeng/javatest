@@ -4,6 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONCreator;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.annotation.JSONType;
+import com.alibaba.fastjson.parser.DefaultJSONParser;
+import com.alibaba.fastjson.parser.JSONToken;
+import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;
+
+import java.lang.reflect.Type;
 
 public class JsonInterfaceTest {
     public interface AInterface{
@@ -26,7 +31,8 @@ public class JsonInterfaceTest {
     public static class BClass{
         private String type;
 
-        private AInterface aInterface=new AClass();
+        @JSONField(deserializeUsing = AClassDeserialize.class)
+        private AInterface aInterface;
 
         public String getType() {
             return type;
@@ -42,6 +48,21 @@ public class JsonInterfaceTest {
 
         public void setAInterface(AInterface aInterface) {
             this.aInterface = aInterface;
+        }
+    }
+    public static class AClassDeserialize implements ObjectDeserializer{
+        @Override
+        public <T> T deserialze(DefaultJSONParser parser, Type type, Object fieldName) {
+            if (AInterface.class.isAssignableFrom((Class)type)) {
+                AClass a = parser.parseObject(AClass.class);
+                return (T) a;
+            }
+            return null;
+        }
+
+        @Override
+        public int getFastMatchToken() {
+            return 0;
         }
     }
     public static void main(String[] args) {
